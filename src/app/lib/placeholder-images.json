@@ -1,0 +1,29 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-finance",
+      "description": "Clean modern financial background",
+      "imageUrl": "https://picsum.photos/seed/finance1/1200/800",
+      "imageHint": "finance savings"
+    },
+    {
+      "id": "user-avatar",
+      "description": "User profile placeholder",
+      "imageUrl": "https://picsum.photos/seed/user1/200/200",
+      "imageHint": "profile person"
+    },
+    {
+      "id": "fintech-hero",
+      "description": "Modern fintech website hero image showing a large smartphone displaying a savings circle app dashboard with ₦500,000 balance, clean UI, floating contribution notifications, soft blue gradient background, diverse group of young professionals collaborating around a table using phones and laptops, modern SaaS style, soft lighting, high quality, minimal, professional startup landing page illustration, 16:9",
+      "imageUrl": "https://picsum.photos/seed/fintech-dashboard/1920/1080",
+      "imageHint": "fintech dashboard"
+    },
+    {
+      "id": "fintech-hero-illustration",
+      "description": "Modern fintech website hero illustration showing smartphone dashboard and professionals collaborating",
+      "imageUrl": "https://picsum.photos/seed/fintech-hero/1280/720",
+      "imageHint": "fintech dashboard collaboration"
+    }
+  ]
+}

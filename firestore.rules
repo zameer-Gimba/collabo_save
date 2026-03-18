@@ -1,0 +1,63 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- GLOBAL HELPER FUNCTIONS ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isCircleMember(memberMap) {
+      return isSignedIn() && memberMap[request.auth.uid] != null;
+    }
+
+    // --- COLLECTION RULES ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn(); // Allow reading other users for collaborative features
+      allow list: if isSignedIn();
+      allow create: if isOwner(userId) 
+                    && request.resource.data.role == 'user' 
+                    && request.resource.data.isAdmin == false;
+      allow update: if isOwner(userId) 
+                    && request.resource.data.role == resource.data.role
+                    && request.resource.data.isAdmin == resource.data.isAdmin;
+      allow delete: if isAdmin();
+    }
+
+    match /verifications/{verificationId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /savingsCircles/{savingsCircleId} {
+      allow get, list: if isCircleMember(resource.data.members) || isAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if isOwner(resource.data.createdByUserId) || isAdmin();
+
+      match /memberships/{membershipId} {
+        allow get, list: if isCircleMember(resource.data.savingsCircleMembers) || isAdmin();
+        allow create, update, delete: if isCircleMember(resource.data.savingsCircleMembers) || isAdmin();
+      }
+
+      match /contributions/{contributionId} {
+        allow get, list: if isCircleMember(resource.data.savingsCircleMembers) || isAdmin();
+        allow create, update, delete: if isCircleMember(resource.data.savingsCircleMembers) || isAdmin();
+      }
+
+      match /payouts/{payoutId} {
+        allow get, list: if isCircleMember(resource.data.savingsCircleMembers) || isAdmin();
+        allow create, update, delete: if isAdmin() || isOwner(resource.data.savingsCircleCreatedByUserId);
+      }
+    }
+  }
+}

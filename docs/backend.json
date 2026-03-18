@@ -1,0 +1,119 @@
+
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user account in the CollaboSave application, including profile details, KYC verification status, and administrative roles.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "kycStatus": {
+          "type": "string",
+          "description": "The Know Your Customer (KYC) verification status of the user.",
+          "enum": ["not_started", "pending", "verified", "failed"]
+        },
+        "role": {
+          "type": "string",
+          "description": "The administrative role of the user.",
+          "enum": ["user", "admin"]
+        },
+        "isAdmin": {
+          "type": "boolean",
+          "description": "Flag indicating if the user has administrative privileges."
+        },
+        "trustScore": {
+          "type": "string",
+          "description": "A calculated trust score for the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "fullName",
+        "email",
+        "kycStatus",
+        "role",
+        "isAdmin",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Verification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Verification",
+      "type": "object",
+      "description": "Administrative records for KYC and trust score approvals.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string", "enum": ["KYC", "TRUST_SCORE"] },
+        "status": { "type": "string", "enum": ["PENDING", "APPROVED", "REJECTED"] },
+        "requestedAt": { "type": "string", "format": "date-time" },
+        "resolvedAt": { "type": "string", "format": "date-time" },
+        "resolvedBy": { "type": "string" }
+      }
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "user",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles and administrative roles."
+        }
+      },
+      {
+        "path": "/verifications/{verificationId}",
+        "definition": {
+          "entityName": "verification",
+          "schema": {
+            "$ref": "#/backend/entities/Verification"
+          },
+          "description": "KYC verification queue accessible only by admins."
+        }
+      },
+      {
+        "path": "/savingsCircles/{savingsCircleId}",
+        "definition": {
+          "entityName": "savingsCircle",
+          "schema": {
+            "$ref": "#/backend/entities/SavingsCircle"
+          },
+          "description": "Details of collaborative savings circles."
+        }
+      }
+    ]
+  }
+}
